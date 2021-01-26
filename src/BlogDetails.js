@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import useFetch from './useFetch'
 
 const BlogDetails = ({ match }) => {
@@ -6,8 +6,16 @@ const BlogDetails = ({ match }) => {
   const { loading, errorMessage, data: blog } = useFetch(
     `http://localhost:8000/blogs/${id}`
   )
+  const history = useHistory()
 
-  console.log(blog)
+  const deleteHandler = async (id) => {
+    try {
+      await fetch(`http://localhost:8000/blogs/${id}`, { method: 'DELETE' })
+      history.push('/')
+    } catch (error) {
+      console.log('error')
+    }
+  }
 
   return (
     <div className='blog-details'>
@@ -20,6 +28,7 @@ const BlogDetails = ({ match }) => {
           <h2>{blog.title}</h2>
           <p>Written by {blog.author}</p>
           <div>{blog.body}</div>
+          <button onClick={() => deleteHandler(blog.id)}>delete</button>
         </article>
       )}
     </div>
