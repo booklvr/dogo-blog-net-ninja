@@ -1,31 +1,20 @@
-import { useState, useEffect } from 'react'
+import { useParams } from 'react-router-dom'
 import BlogList from './BlogList'
+import useFetch from './useFetch'
 
 const Home = () => {
-  const [blogs, setBlogs] = useState(null)
-
-  const deleteBlogHandler = (id) => {
-    setBlogs(() => blogs.filter((blog) => blog.id !== id))
-  }
-
-  useEffect(() => {
-    fetch('http://localhost:8000/blogs')
-      .then((res) => {
-        return res.json()
-      })
-      .then((data) => {
-        setBlogs(data)
-      })
-  }, [])
+  const { loading, errorMessage, data } = useFetch(
+    ' http://localhost:8000/blogs'
+  )
 
   return (
     <div className='home'>
-      {blogs && (
-        <BlogList
-          blogs={blogs}
-          title={'All Blogs'}
-          deleteBlogHandler={deleteBlogHandler}
-        />
+      {loading ? (
+        <div>Loading...</div>
+      ) : errorMessage ? (
+        <div>{errorMessage}</div>
+      ) : (
+        <BlogList blogs={data} title={'All Blogs'} />
       )}
     </div>
   )
